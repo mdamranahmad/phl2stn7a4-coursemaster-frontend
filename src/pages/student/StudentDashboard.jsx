@@ -188,6 +188,7 @@ export default function StudentDashboard() {
                         const isExpanded = expandedCourse === courseId;
                         const stats = courseStats[courseId];
                         const isLoading = loadingStats[courseId];
+                        loadCourseStats(courseId, false);
 
                         return (
                             <div
