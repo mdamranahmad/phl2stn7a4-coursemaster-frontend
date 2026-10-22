@@ -513,6 +513,7 @@ function QuizInterface({ quiz, courseId, lessonId, enrollment, onComplete }) {
     const [error, setError] = useState(null);
     const [previousSubmission, setPreviousSubmission] = useState(null);
     const [loadingPrevious, setLoadingPrevious] = useState(true);
+    const [isRetaking, setIsRetaking] = useState(false);
 
     // Check for previous submission on mount
     useEffect(() => {
@@ -571,7 +572,7 @@ function QuizInterface({ quiz, courseId, lessonId, enrollment, onComplete }) {
     const handleSubmit = async () => {
         // Allow resubmission - students can retake quizzes
         // Just show a warning if they've already submitted
-        if (submitted && previousSubmission) {
+        if (submitted && previousSubmission && isRetaking) {
             const confirmRetake = window.confirm(
                 "You have already submitted this quiz. Do you want to submit again? Your new score will replace the previous one."
             );
@@ -705,8 +706,8 @@ function QuizInterface({ quiz, courseId, lessonId, enrollment, onComplete }) {
                     {quiz.map((question, qIdx) => {
                         const userAnswer = answers[qIdx];
                         const isCorrect = userAnswer === question.correctIndex;
-                        const showResults = submitted && previousSubmission;
-                        const showReview = previousSubmission && !submitted;
+                        const showResults = submitted && previousSubmission && !isRetaking;
+                        const showReview = previousSubmission && !submitted && !isRetaking;
 
                         return (
                             <div
@@ -807,7 +808,7 @@ function QuizInterface({ quiz, courseId, lessonId, enrollment, onComplete }) {
                 )}
 
                 <button
-                    onClick={handleSubmit}
+                    onClick={() => {setIsRetaking((prev) => !prev); handleSubmit();}}
                     disabled={loading || Object.keys(answers).length !== quiz.length}
                     className="btn btn-primary btn-sm sm:btn-md mt-4 sm:mt-6 w-full"
                 >
